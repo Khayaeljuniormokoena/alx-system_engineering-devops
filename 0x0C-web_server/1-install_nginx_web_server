@@ -5,10 +5,10 @@
 #++    at the root with a curl GET request.
 
 # updates the package lists for available software packages.
-sudo apt-get update
+apt-get update
 
 # installs the Nginx web server.
-sudo apt-get install -y nginx
+apt-get install -y nginx
 
 # Creates the /etc/nginx/html directory, which will serve as the document root directory for Nginx.
 mkdir -p /etc/nginx/html
