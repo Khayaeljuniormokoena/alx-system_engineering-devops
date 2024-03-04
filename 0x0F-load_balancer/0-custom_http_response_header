@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Install Nginx
+sudo apt-get update
+sudo apt-get install -y nginx
+
+# Get the hostname of the server
+hostname=$(hostname)
+
+# Create a backup of the default Nginx configuration
+sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+
+# Configure Nginx with a custom response header
+sudo bash -c "cat > /etc/nginx/sites-available/default <<EOL
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name _;
+
+    add_header X-Served-By \$hostname;
+
+    location / {
+        proxy_pass http://localhost:5000; # Adjust the proxy_pass if needed
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOL"
+
+# Restart Nginx to apply changes
+sudo service nginx restart
+
+# Print a message indicating successful configuration
+echo "Nginx configured with custom HTTP response header on $hostname"
